@@ -2,6 +2,21 @@
 
 All notable changes to `laravel-medialibrary` will be documented in this file
 
+## 11.23.2 - 2026-07-09
+
+### What's Changed
+
+* Bump actions/checkout from 6 to 7 by @dependabot[bot] in https://github.com/spatie/laravel-medialibrary/pull/3946
+* test: remove real sleep(1) from regenerate command tests by @nikolauspschuetz in https://github.com/spatie/laravel-medialibrary/pull/3951
+* Fix double URL encoding for getTemporaryUrl() with non-ASCII filenames on local disk by @maeandrew in https://github.com/spatie/laravel-medialibrary/pull/3950
+
+### New Contributors
+
+* @nikolauspschuetz made their first contribution in https://github.com/spatie/laravel-medialibrary/pull/3951
+* @maeandrew made their first contribution in https://github.com/spatie/laravel-medialibrary/pull/3950
+
+**Full Changelog**: https://github.com/spatie/laravel-medialibrary/compare/11.23.1...11.23.2
+
 ## 11.23.1 - 2026-06-24
 
 ### Fixed
