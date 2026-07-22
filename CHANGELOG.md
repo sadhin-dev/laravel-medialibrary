@@ -2,6 +2,15 @@
 
 All notable changes to `laravel-medialibrary` will be documented in this file
 
+## 11.23.3 - 2026-07-22
+
+### What's Changed
+
+* Remove period from the command description by @kminek in https://github.com/spatie/laravel-medialibrary/pull/3953
+* Keep the just-added media when enforcing a collection size limit by @freekmurze in https://github.com/spatie/laravel-medialibrary/pull/3955
+
+**Full Changelog**: https://github.com/spatie/laravel-medialibrary/compare/11.23.2...11.23.3
+
 ## 11.23.2 - 2026-07-09
 
 ### What's Changed
