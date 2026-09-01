@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-medialibrary` will be documented in this file
 
+## 11.23.6 - 2026-09-01
+
+### What's Changed
+
+* Document the `addMediaFrom*` and `getFirstMedia`/`getLastMedia` methods on the `HasMedia` interface with `@method`, so calls on a `Model&HasMedia` intersection type no longer trip up static analysis by @freekmurze in https://github.com/spatie/laravel-medialibrary/issues/3962
+
+**Full Changelog**: https://github.com/spatie/laravel-medialibrary/compare/11.23.5...11.23.6
+
 ## 11.23.5 - 2026-08-10
 
 ### What's Changed
