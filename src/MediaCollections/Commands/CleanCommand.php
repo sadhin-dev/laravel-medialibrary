@@ -222,19 +222,16 @@ class CleanCommand extends Command
             $prefix = trim($prefix, '/').'/';
         }
 
-        $mediaIdSet = $this->mediaRepository->allIds()->flip();
+        $usedDirectoriesByDisk = $this->getUsedDirectoriesByDisk($prefix);
 
         foreach ($diskNames as $diskName) {
             /** @var array<int, string> $directories */
             $directories = $this->fileSystem->disk($diskName)->directories($prefix);
 
             collect($directories)
-                ->map(fn (string $directory) => str_replace($prefix, '', $directory))
-                ->filter(fn (string $directory) => is_numeric($directory))
-                ->reject(fn (string $directory) => $mediaIdSet->has((int) $directory))
-                ->each(function (string $directory) use ($diskName, $prefix) {
-                    $directory = $prefix.$directory;
-
+                ->map(fn (string $directory) => rtrim($directory, '/'))
+                ->reject(fn (string $directory) => isset($usedDirectoriesByDisk[$diskName][$directory]))
+                ->each(function (string $directory) use ($diskName) {
                     if (! $this->isDryRun) {
                         $this->fileSystem->disk($diskName)->deleteDirectory($directory);
                     }
@@ -246,6 +243,35 @@ class CleanCommand extends Command
                     $this->info("Orphaned media directory `{$directory}` on disk `{$diskName}` ".($this->isDryRun ? 'found' : 'has been removed'));
                 });
         }
+    }
+
+    /** @return array<string, array<string, true>> */
+    protected function getUsedDirectoriesByDisk(string $prefix): array
+    {
+        $usedDirectoriesByDisk = [];
+
+        $this->mediaRepository->all()->each(function (Media $media) use (&$usedDirectoriesByDisk, $prefix): void {
+            $pathGenerator = PathGeneratorFactory::create($media);
+            $conversionsDisk = $this->conversionsDiskName($media);
+
+            $pathsByDisk = [
+                [$media->disk, $pathGenerator->getPath($media)],
+                [$conversionsDisk, $pathGenerator->getPathForConversions($media)],
+                [$conversionsDisk, $pathGenerator->getPathForResponsiveImages($media)],
+            ];
+
+            foreach ($pathsByDisk as [$diskName, $path]) {
+                $directory = $this->getTopLevelDirectory($path, $prefix);
+
+                if ($directory === null) {
+                    continue;
+                }
+
+                $usedDirectoriesByDisk[$diskName][$directory] = true;
+            }
+        });
+
+        return $usedDirectoriesByDisk;
     }
 
     /** @return array<int, string> */
@@ -264,6 +290,28 @@ class CleanCommand extends Command
             ->unique()
             ->values()
             ->all();
+    }
+
+    protected function getTopLevelDirectory(string $path, string $prefix): ?string
+    {
+        $path = trim($path, '/');
+        $prefix = trim($prefix, '/');
+
+        if ($path === '') {
+            return null;
+        }
+
+        if ($prefix === '') {
+            return Str::before($path, '/');
+        }
+
+        if (! Str::startsWith($path, "{$prefix}/")) {
+            return null;
+        }
+
+        $directory = Str::before(Str::after($path, "{$prefix}/"), '/');
+
+        return $directory === '' ? null : "{$prefix}/{$directory}";
     }
 
     protected function markConversionAsRemoved(Media $media, string $conversionPath): void
