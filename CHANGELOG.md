@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-medialibrary` will be documented in this file
 
+## 11.23.7 - 2026-09-03
+
+### What's Changed
+
+* Fix media-library:clean ignoring custom PathGenerator for orphaned directories by @nikolauspschuetz in https://github.com/spatie/laravel-medialibrary/pull/3948
+
+**Full Changelog**: https://github.com/spatie/laravel-medialibrary/compare/11.23.6...11.23.7
+
 ## 11.23.6 - 2026-09-01
 
 ### What's Changed
